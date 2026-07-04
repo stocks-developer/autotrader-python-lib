@@ -6,12 +6,17 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="AutoTrader-Web-API-Stocks-Developer",
     version="1.3.5",
-    author="Pritesh Mhatre",
+    author="Stocks Developer",
     author_email="help@stocksdeveloper.in",
-    description="Python trading API library for Zerodha, Upstox, AliceBlue, Finvasia, Angel One, Fyers, IIFL, 5Paisa, Profitmart, Mastertrust, Edelweiss, Motilal Oswal, Kotak Securities",
+    description="Broker-independent Python trading API for automated, single or multi-account trading across 40+ Indian brokers. Part of AutoTrader Web by Stocks Developer.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Pritesh-Mhatre/python-library",
+    url="https://stocksdeveloper.in/",
+    project_urls={
+        "Homepage": "https://stocksdeveloper.in/",
+        "Documentation": "https://stocksdeveloper.in/documentation/client-setup/python-library/",
+        "Source": "https://github.com/stocks-developer/autotrader-python-lib",
+    },
     packages=setuptools.find_packages(),
     install_requires=['requests'],    
     classifiers=[
