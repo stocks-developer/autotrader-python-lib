@@ -8,7 +8,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="AutoTrader-Web-API-Stocks-Developer",
-    version="1.4.0",
+    version="1.5.0",
     author="Stocks Developer",
     author_email="help@stocksdeveloper.in",
     description="Broker-independent Python trading API for automated, single or multi-account trading across 40+ Indian brokers. Part of AutoTrader Web by Stocks Developer.",

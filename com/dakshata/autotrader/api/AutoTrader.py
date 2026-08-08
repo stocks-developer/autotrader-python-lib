@@ -17,6 +17,8 @@ from com.dakshata.trading.model.platform.PlatformMargin import PlatformMargin
 from com.dakshata.trading.model.platform.PlatformOrder import PlatformOrder
 from com.dakshata.trading.model.platform.PlatformPosition import PlatformPosition
 from com.dakshata.trading.model.platform.PlatformHolding import PlatformHolding
+from com.dakshata.data.model.autotrader.service.TradingAccountPublic import TradingAccountPublic
+from com.dakshata.data.model.autotrader.service.AccountValidationPublic import AccountValidationPublic
 
 class AutoTrader:
 
@@ -67,11 +69,14 @@ class AutoTrader:
             self.service_url = service_url
             AutoTrader.__instances[api_key] = self
 
-    def __request(self, uri, data, request_lambda):
+    def __request(self, uri, data, request_lambda, base_uri=None):
         """
         Private method to post data to the server.
+
+        base_uri selects the group of endpoints: the trading endpoints by default,
+        or the account endpoints when passed explicitly.
         """
-        url = self.service_url + AutoTrader.__TRADING_URI + uri
+        url = self.service_url + (base_uri or AutoTrader.__TRADING_URI) + uri
         headers = {'api-key': self.api_key}
 
         try:
@@ -119,6 +124,22 @@ class AutoTrader:
         Private method to post data to the server.
         """
         return self.__request(uri, data, lambda u, h, d: requests.post(u, headers=h, data=d))
+
+    def __account_get(self, uri, data=None):
+        """
+        Private method to read from the account endpoints.
+        """
+        return self.__request(uri, data or {}, \
+            lambda u, h, d: requests.get(u, headers=h, params=d), \
+            base_uri=AutoTrader.__ACCOUNT_URI)
+
+    def __account_post(self, uri, data=None):
+        """
+        Private method to post to the account endpoints.
+        """
+        return self.__request(uri, data or {}, \
+            lambda u, h, d: requests.post(u, headers=h, data=d), \
+            base_uri=AutoTrader.__ACCOUNT_URI)
 
     def __cancel_order(self, uri, pseudo_account, platform_id=None):
         """
@@ -436,4 +457,103 @@ class AutoTrader:
                 holdings.append(PlatformHolding(**m))
             response.result = holdings
         
+        return response
+
+    def fetch_live_pseudo_accounts(self):
+        """
+        API function to list the live pseudo accounts under your user (see API docs).
+
+        A pseudo account is the nickname you trade under. Only live accounts can trade.
+
+        https://stocksdeveloper.in/documentation/api/fetch-live-pseudo-accounts/
+        """
+
+        return self.__account_get("/fetchLivePseudoAccounts")
+
+    def fetch_all_trading_accounts(self):
+        """
+        API function to fetch every trading account under your user (see API docs).
+
+        Returns the broker, platform, nickname and licence details of each account.
+        It never returns credentials or any other sensitive field.
+
+        https://stocksdeveloper.in/documentation/api/fetch-all-trading-accounts/
+        """
+
+        response = self.__account_get("/fetchAllTradingAccounts")
+
+        if response.result and isinstance(response.result, list):
+            accounts = []
+            for a in response.result:
+                accounts.append(TradingAccountPublic(**a))
+            response.result = accounts
+
+        return response
+
+    def create_trading_account(self, account):
+        """
+        API function to add a new broker trading account (see API docs).
+
+        Pass the account fields as a dictionary. The keys depend on your broker and
+        platform, so check the API docs for the common and broker specific fields.
+        On success the result is the new trading account id.
+
+        https://stocksdeveloper.in/documentation/api/create-or-update-trading-account/
+        """
+
+        return self.__account_post("/createTradingAccount", account)
+
+    def update_trading_account(self, account):
+        """
+        API function to update an existing broker trading account (see API docs).
+
+        Takes the same fields as create_trading_account.
+
+        https://stocksdeveloper.in/documentation/api/create-or-update-trading-account/
+        """
+
+        return self.__account_post("/updateTradingAccount", account)
+
+    def validate_credentials(self, account):
+        """
+        API function to check whether broker credentials are valid, without saving
+        an account (see API docs).
+
+        Useful before calling create_trading_account.
+
+        https://stocksdeveloper.in/documentation/api/validate-trading-account-credentials/
+        """
+
+        return self.__account_post("/validateCredentials", account)
+
+    def validate_account(self, trading_account_id):
+        """
+        API function to check whether a saved account can still log in to the broker
+        (see API docs).
+
+        Useful every morning before the market opens, to find accounts with expired
+        credentials early.
+
+        https://stocksdeveloper.in/documentation/api/validate-trading-account-credentials/
+        """
+
+        return self.__account_post("/validateAccount", \
+            {'tradingAccId': trading_account_id})
+
+    def validate_all_accounts(self):
+        """
+        API function to check every trading account under your user in one call, and
+        report each one separately (see API docs).
+
+        https://stocksdeveloper.in/documentation/api/validate-trading-account-credentials/
+        """
+
+        response = self.__account_post("/validateAllAccounts")
+
+        if response.result and isinstance(response.result, list):
+            results = []
+            for r in response.result:
+                results.append(AccountValidationPublic(**r))
+            response.result = results
+
         return response
