@@ -16,6 +16,7 @@ The **AutoTrader Web Python library** is a broker-independent trading client. Yo
 
 - **Broker independent.** One codebase works across 40+ Indian brokers. The system handles each broker's API and trading-symbol format for you.
 - **Full order control.** Regular, bracket, cover and advanced orders, plus modify, cancel and square-off.
+- **Bracket and cover orders on every broker.** AutoTrader's own bracket and cover orders, with a trailing stop-loss, work even on brokers that do not offer them.
 - **Read your portfolio.** Live orders, positions, holdings and margins from your code.
 - **Multi-account.** Place into one account or many at once.
 - **Direct connection.** Your code talks to AutoTrader Web over a secure web connection. Nothing extra to install.
@@ -28,6 +29,7 @@ The **AutoTrader Web Python library** is a broker-independent trading client. Yo
 - **Copy trading, two ways.** PMS copy from our terminal, and master-child copy in the background, across brokers, with per-account sizing. [Copy trading software](https://stocksdeveloper.in/copy-trading-software/)
 - **Bulk orders.** Place, modify, cancel and square-off across many accounts in one action.
 - **GTT, bracket and cover orders**, order slicing and market price protection.
+- **AutoTrader bracket and cover orders** with a trailing stop-loss, on every broker we support.
 - **TradingView automation.** Turn your own chart alerts into real orders.
 - **APIs and SDKs.** Python, Java, C# and Excel, plus AmiBroker, MetaTrader and HTTP REST / CSV.
 - **8+ years in operation. 99.98% uptime. 40+ brokers. Under 100 ms data latency.**

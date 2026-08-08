@@ -246,6 +246,68 @@ class AutoTrader:
 
         return self.__post("/placeCoverOrder", data)
 
+    def place_autotrader_bracket_order(self, pseudo_account,
+            exchange, symbol, tradeType, orderType,
+            quantity, price, triggerPrice,
+            target, stoploss, trailingStoploss=0.0):
+        """
+        Places an AutoTrader bracket order (see API docs).
+
+        This is our own bracket order. It works with every broker we support,
+        including brokers that do not offer bracket orders of their own. The
+        entry goes to your broker as an ordinary intraday order and we watch
+        the target, stoploss and trailing stoploss for you.
+
+        target, stoploss and trailingStoploss are distances in rupees away from
+        your entry price, the same as they are for place_bracket_order. The
+        trailingStoploss is the step the stop moves in, so it needs a stoploss
+        alongside it to say how far behind the price the stop sits.
+
+        https://stocksdeveloper.in/documentation/api/place-autotrader-bracket-order/
+        """
+
+        data = {'pseudoAccount': pseudo_account,
+            'exchange': exchange,
+            'symbol': symbol,
+            'tradeType': tradeType,
+            'orderType': orderType,
+            'quantity': quantity,
+            'price': price,
+            'triggerPrice': triggerPrice,
+            'target': target,
+            'stoploss': stoploss,
+            'trailingStoploss': trailingStoploss}
+
+        return self.__post("/placeAutoTraderBracketOrder", data)
+
+    def place_autotrader_cover_order(self, pseudo_account,
+            exchange, symbol, tradeType, orderType,
+            quantity, price, stoploss, trailingStoploss=0.0):
+        """
+        Places an AutoTrader cover order (see API docs).
+
+        A stoploss without a target, which works with every broker we support.
+
+        Note the difference from place_cover_order: a broker cover order carries
+        its stop as an absolute price in triggerPrice, whereas an AutoTrader
+        cover order carries it as a distance in rupees away from your entry
+        price in stoploss. There is no trigger price to pass.
+
+        https://stocksdeveloper.in/documentation/api/place-autotrader-cover-order/
+        """
+
+        data = {'pseudoAccount': pseudo_account,
+            'exchange': exchange,
+            'symbol': symbol,
+            'tradeType': tradeType,
+            'orderType': orderType,
+            'quantity': quantity,
+            'price': price,
+            'stoploss': stoploss,
+            'trailingStoploss': trailingStoploss}
+
+        return self.__post("/placeAutoTraderCoverOrder", data)
+
     def place_advanced_order(self, variety, pseudo_account,
             exchange, symbol, tradeType, orderType,
             productType, quantity, price, triggerPrice,
