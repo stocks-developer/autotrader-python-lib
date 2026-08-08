@@ -1,0 +1,85 @@
+# Publishes AutoTrader-Web-API-Stocks-Developer to PyPI.
+#
+# No API token is stored anywhere. The publish job asks GitHub for a short-lived OIDC token, PyPI
+# validates it against the trusted publisher registered for this project, and issues a temporary
+# token for that upload only. Nothing to rotate, nothing to leak.
+#
+# Release = push a tag matching the version in setup.py, e.g.
+#     git tag v1.4.0 && git push origin v1.4.0
+# The build refuses to continue if the tag and setup.py disagree, so a forgotten version bump fails
+# here rather than uploading the wrong number - and a PyPI version can never be re-uploaded.
+#
+# See RELEASING.md for the full process and the one-time PyPI setup.
+
+name: Publish to PyPI
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:          # manual run, publishes whatever version setup.py says
+
+permissions:
+  contents: read
+
+jobs:
+  # Build is deliberately separate and has NO id-token permission: it runs setup.py, and there is no
+  # reason for the step that executes project code to be able to mint a PyPI token.
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Read version from setup.py
+        id: version
+        run: |
+          VERSION=$(sed -n 's/.*version="\([^"]*\)".*/\1/p' setup.py | head -1)
+          if [ -z "$VERSION" ]; then echo "::error::no version= found in setup.py"; exit 1; fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "setup.py version: $VERSION"
+
+      - name: Check the tag matches the setup.py version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          if [ "$TAG" != "${{ steps.version.outputs.version }}" ]; then
+            echo "::error::tag v$TAG does not match setup.py version ${{ steps.version.outputs.version }}"
+            exit 1
+          fi
+
+      - name: Build wheel and sdist
+        run: |
+          python -m pip install --upgrade build twine
+          python -m build
+
+      # Fails the release if the long description would not render on PyPI, which is otherwise only
+      # discovered after the upload has already been made permanent.
+      - name: Check the distributions
+        run: |
+          python -m twine check dist/*
+          ls -l dist/
+          test -f "dist/autotrader_web_api_stocks_developer-${{ steps.version.outputs.version }}-py3-none-any.whl" \
+            || { echo "::error::expected wheel for ${{ steps.version.outputs.version }} was not produced"; exit 1; }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write         # REQUIRED: lets this job request the GitHub OIDC token
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      # No username, no password, no token input - the action exchanges the OIDC token itself.
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

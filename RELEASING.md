@@ -5,7 +5,61 @@ Maintainer notes for publishing this library to PyPI as
 
 Last verified: **2026-08-08** (release 1.4.0).
 
-## Before you start
+**Publishing is keyless.** [`.github/workflows/publish.yml`](.github/workflows/publish.yml) does it,
+using a PyPI [trusted publisher](https://docs.pypi.org/trusted-publishers/): the job requests a
+short-lived GitHub OIDC token, PyPI validates it against the publisher registered for this project,
+and issues a temporary token for that one upload. **No API token is stored in this repository or
+anywhere else**, so there is nothing to rotate and nothing to leak.
+
+## Releasing
+
+**1. Bump the version.** One place only — `version=` in `setup.py`.
+
+**2. Commit, then tag and push the tag.**
+
+```bash
+git commit -am "Release 1.5.0"
+git push
+git tag v1.5.0 && git push origin v1.5.0
+```
+
+The tag must match `setup.py` — the build compares them and fails if they disagree. That matters
+here more than most places, because **a PyPI version can never be re-uploaded**, even after deleting
+the release.
+
+**3. Watch the run** under the repo's Actions tab, then confirm the install:
+
+```bash
+python -m pip install --upgrade AutoTrader-Web-API-Stocks-Developer
+```
+
+The workflow runs `twine check` before uploading, so a long description that would not render on
+PyPI fails the build instead of being discovered after the upload is permanent.
+
+## One-time setup
+
+Done once per project, and needed before the first keyless release.
+
+On PyPI: **Your projects → Manage → Publishing → GitHub**, then add:
+
+| Field | Value |
+|---|---|
+| Owner | `stocks-developer` |
+| Repository name | `autotrader-python-lib` |
+| Workflow name | `publish.yml` |
+| Environment | *(leave empty — this workflow does not use a GitHub environment)* |
+
+PyPI strongly encourages a GitHub environment for the extra approval gate. This workflow does not use
+one, to keep the setup simple. To add it later: create an environment in the repo settings, put
+`environment: <name>` on the `publish` job, and set the same name in the PyPI publisher — all three
+must agree or the upload is rejected.
+
+## Publishing by hand
+
+Should not be needed, and is discouraged — a stored token is exactly what trusted publishing removes.
+The steps below are kept for the case where GitHub Actions is unavailable.
+
+### Before you start
 
 - Every change is committed and pushed. The build packages the working tree, so anything uncommitted
   would ship unreviewed.
@@ -21,7 +75,7 @@ Last verified: **2026-08-08** (release 1.4.0).
 > **A PyPI version can never be re-uploaded.** Deleting a release does not free the number. Get it
 > right before you upload, and use `twine check` to catch metadata problems first.
 
-## Steps
+### Steps
 
 **1. Bump the version.** One place only — `version=` in `setup.py`.
 
@@ -86,5 +140,9 @@ python -c "import com.dakshata.autotrader.api.AutoTrader as m; print('ok')"
   If you ever see that, this is why.
 - **Bump the version before building, not after.** `python -m build` bakes the version into the
   filenames; building first and bumping after silently republishes the old number.
-- The website's Python setup page installs "latest" and does **not** pin a version, so a release needs
-  no website change. Only the Java library page pins a version.
+- **Update the website after a release.** The Python setup page installs "latest", so nothing breaks
+  if you forget — but the page states the current version in two places ("The current version is
+  X.Y.Z" and the minimum version for a feature), and a stale number there misleads people into
+  thinking they are up to date. Page:
+  `stocksdev-website/src/content/docs/client-setup/python-library.md`. Bump `lastUpdated` in the same
+  edit. A brand-new API call should also get a "needs version X.Y.Z" note on its API reference page.
