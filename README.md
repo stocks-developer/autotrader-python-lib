@@ -104,6 +104,7 @@ Full step-by-step guide: **[Python library setup](https://stocksdeveloper.in/doc
 | 📦 PyPI package | https://pypi.org/project/AutoTrader-Web-API-Stocks-Developer/ |
 | 🆓 Start free (1-month trial) | https://webx.stocksdeveloper.in/register |
 | ✉️ Contact us | https://stocksdeveloper.in/contact/ |
+| 🛠️ Maintainers: releasing | [RELEASING.md](RELEASING.md) |
 
 ## About Stocks Developer
 

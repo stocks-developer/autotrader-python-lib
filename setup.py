@@ -1,11 +1,14 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+# encoding is explicit on purpose: README.md is UTF-8 (it contains the rupee sign and
+# emoji), while open() defaults to the platform codec -- cp1252 on Windows -- so building
+# a release here fails with UnicodeDecodeError without this.
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="AutoTrader-Web-API-Stocks-Developer",
-    version="1.3.5",
+    version="1.4.0",
     author="Stocks Developer",
     author_email="help@stocksdeveloper.in",
     description="Broker-independent Python trading API for automated, single or multi-account trading across 40+ Indian brokers. Part of AutoTrader Web by Stocks Developer.",
