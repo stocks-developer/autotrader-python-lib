@@ -54,6 +54,24 @@ one, to keep the setup simple. To add it later: create an environment in the rep
 `environment: <name>` on the `publish` job, and set the same name in the PyPI publisher — all three
 must agree or the upload is rejected.
 
+### Checking the publisher works
+
+Run the workflow manually (`workflow_dispatch`) without bumping the version. It will build the
+current version and try to upload it, and the **error tells you what you need to know**:
+
+- `400 File already exists` — **the publisher is configured correctly.** PyPI authenticated the
+  workflow and would have accepted the upload; it only refused because that version is already
+  published.
+- `403 Forbidden` — the publisher is wrong or missing. Check the owner, repository, workflow name and
+  environment all match exactly.
+
+A deliberately failed run of the first kind is in this repo's history from 2026-08-08. That is what it
+was for.
+
+Successful runs also publish **Sigstore attestations** to a public transparency log, so a release can
+be traced back to this workflow in this repository. That comes with trusted publishing and needs no
+setup.
+
 ## Publishing by hand
 
 Should not be needed, and is discouraged — a stored token is exactly what trusted publishing removes.
