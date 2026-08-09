@@ -3,7 +3,7 @@
 Maintainer notes for publishing this library to PyPI as
 [`AutoTrader-Web-API-Stocks-Developer`](https://pypi.org/project/AutoTrader-Web-API-Stocks-Developer/).
 
-Last verified: **2026-08-08** (release 1.4.0).
+Last verified: **2026-08-08** (release 1.5.0).
 
 **Publishing is keyless.** [`.github/workflows/publish.yml`](.github/workflows/publish.yml) does it,
 using a PyPI [trusted publisher](https://docs.pypi.org/trusted-publishers/): the job requests a
@@ -18,9 +18,9 @@ anywhere else**, so there is nothing to rotate and nothing to leak.
 **2. Commit, then tag and push the tag.**
 
 ```bash
-git commit -am "Release 1.5.0"
+git commit -am "Release 1.6.0"
 git push
-git tag v1.5.0 && git push origin v1.5.0
+git tag v1.6.0 && git push origin v1.6.0
 ```
 
 The tag must match `setup.py` — the build compares them and fails if they disagree. That matters
