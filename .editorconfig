@@ -1,0 +1,19 @@
+# Editor-side counterpart to .gitattributes.
+#
+# .gitattributes fixes line endings on the way INTO git. This fixes them at
+# the point they are WRITTEN, so git never has to launder anything -- and it
+# works in any editor, not just the one configured on one machine.
+#
+# Deliberately limited to line endings. Nothing here rewrites file content
+# (no trailing-whitespace trimming, no final-newline insertion), so opening
+# a file can never produce a diff you did not intend.
+#
+# https://editorconfig.org
+root = true
+
+[*]
+end_of_line = lf
+
+# Windows batch files must stay CRLF -- see .gitattributes.
+[*.{bat,cmd}]
+end_of_line = crlf
