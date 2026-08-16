@@ -1,0 +1,65 @@
+# Line endings are a property of this repository, not of the machine that
+# clones it. Without this file, a clone on a machine with no global rule can
+# commit CRLF blobs into an all-LF history, producing every-line-changed
+# diffs that destroy `git blame` and make review impossible.
+#
+# Everything here is stored LF in git and checked out LF, on every OS.
+# The only exceptions are Windows batch files, which need CRLF.
+
+# Default: git auto-detects text vs binary; all text is LF.
+* text=auto eol=lf
+
+# Source and config: force text, do not leave it to auto-detection.
+# An explicit `text` overrides git's binary heuristic (a NUL byte in the
+# first 8KB), which otherwise silently excludes any source file that
+# contains a literal NUL from normalisation -- we have two such files.
+*.java       text eol=lf
+*.js         text eol=lf
+*.mjs        text eol=lf
+*.cjs        text eol=lf
+*.ts         text eol=lf
+*.py         text eol=lf
+*.cs         text eol=lf
+*.sql        text eol=lf
+*.sh         text eol=lf
+*.properties text eol=lf
+*.gradle     text eol=lf
+*.xml        text eol=lf
+*.json       text eol=lf
+*.yml        text eol=lf
+*.yaml       text eol=lf
+*.md         text eol=lf
+*.html       text eol=lf
+*.css        text eol=lf
+*.svg        text eol=lf
+
+# Unix scripts that are executed by a shell: LF is mandatory.
+gradlew      text eol=lf
+*.service    text eol=lf
+*.timer      text eol=lf
+
+# Windows batch files: CRLF is mandatory (cmd.exe mis-parses LF batch
+# files in some multi-line constructs). Matches Gradle's own template.
+*.bat        text eol=crlf
+*.cmd        text eol=crlf
+
+# Binaries: never touch, never diff as text.
+*.jar        binary
+*.zip        binary
+*.gz         binary
+*.pdf        binary
+*.png        binary
+*.jpg        binary
+*.jpeg       binary
+*.gif        binary
+*.webp       binary
+*.ico        binary
+*.icns       binary
+*.ttf        binary
+*.woff       binary
+*.woff2      binary
+*.hxd        binary
+*.xls        binary
+*.xlsx       binary
+*.xlsm       binary
+*.xlam       binary
