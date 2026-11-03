@@ -36,8 +36,8 @@ The **AutoTrader Web Python library** is a broker-independent trading client. Yo
 
 ## Why traders and developers choose us
 
-- 🆓 **Free static IP included** with every account. Saves up to **₹500 per broker account per month** that other tools charge extra for.
-- 💸 **One of the lowest prices in the category.** **₹295 to ₹495 per account per month**, all taxes and the static IP included. No setup fee, no hidden charges.
+- 🌐 **Static IP from ₹100 a month**, taxes included, or your own IPv4 at no charge on IPv4 brokers. Every broker needs one.
+- 💸 **One of the lowest prices in the category.** **₹295 to ₹495 per account per month**, all taxes included. A static IP is a small add-on. No setup fee, no hidden charges.
 - ☁️ **Nothing to install for the platform.** Monitor and trade from your browser on PC or mobile, from anywhere. (Developer libraries connect directly to our servers.)
 - 🔗 **40+ Indian brokers on one platform.** One of the widest broker coverages available.
 - 🔁 **Two ways to copy trade**, PMS and master-child, both included.
@@ -85,7 +85,7 @@ Full step-by-step guide: **[Python library setup](https://stocksdeveloper.in/doc
 ## Pricing and free trial
 
 - **Free 1-month trial** on supported brokers, with every feature included.
-- Then **₹295 to ₹495 per account per month**. All taxes and a free static IP are included. No setup fee, no hidden charges.
+- Then **₹295 to ₹495 per account per month**. All taxes are included. A static IP is a small add-on, from ₹100 a month. No setup fee, no hidden charges.
 - [See full pricing](https://stocksdeveloper.in/pricing/) · [Start free](https://webx.stocksdeveloper.in/register)
 
 ## Documentation and links
